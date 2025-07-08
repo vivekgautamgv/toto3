@@ -145,14 +145,31 @@ else:
 
 # ---------------- Admin: Delete All Users ----------------
 st.divider()
-st.subheader("⚠️ Admin Actions")
+st.subheader("⚠️ Admin Actions (Danger Zone)")
 
-if st.button("🗑️ Delete All Users (Clear Everything)"):
-    confirm = st.checkbox("Yes, I want to delete all users and reset the app")
-    if confirm:
-        with open(DATA_FILE, "w") as f:
-            json.dump({}, f)
-        st.success("✅ All users and their data have been deleted.")
-        st.experimental_rerun()
-    else:
-        st.warning("Please confirm the deletion by checking the box.")
+with st.expander("🗑️ Delete All Users & Reset App"):
+    st.warning("This will permanently delete ALL users, goals, remarks, and activity data.")
+    
+    confirm = st.checkbox("✅ Yes, delete EVERYTHING (no undo)")
+    
+    if st.button("🔥 DELETE EVERYTHING"):
+        if confirm:
+            try:
+                # Step 1: Clear JSON
+                with open(DATA_FILE, "w") as f:
+                    json.dump({}, f)
+                    f.flush()
+                    os.fsync(f.fileno())  # Ensure it's flushed to disk
+                
+                # Step 2: Clear session state variables
+                for key in list(st.session_state.keys()):
+                    del st.session_state[key]
+
+                st.success("✅ All users, goals, and feedback deleted.")
+                st.experimental_rerun()  # Reload app with clean state
+
+            except Exception as e:
+                st.error(f"Error deleting data: {e}")
+        else:
+            st.warning("Please confirm the deletion by checking the box.")
+
