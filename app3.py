@@ -63,11 +63,21 @@ if username:
 
     if st.session_state.new_goals and st.button("💾 Save Goals"):
         new_goals = [{"task": task, "done": False, "completed_at": None} for task in st.session_state.new_goals if task.strip()]
+    
+    # Ensure user exists before updating
+        if username not in data:
+            data[username] = {
+                "timestamp": now.isoformat(),
+                "goals": [],
+                "remarks": {}
+            }
+    
         data[username]["timestamp"] = now.isoformat()
         data[username]["goals"].extend(new_goals)
         save_data(data)
         st.session_state.new_goals = []
         st.success("Goals saved!")
+
 
     # ---------------- Checklist & Reset Individual Goals ----------------
     if user_goals and is_active(user_data["timestamp"]):
