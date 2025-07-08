@@ -166,7 +166,7 @@ with st.expander("🗑️ Delete All Users & Reset App"):
                     del st.session_state[key]
 
                 st.success("✅ All users, goals, and feedback deleted.")
-                st.experimental_rerun()  # Reload app with clean state
+                st.rerun()  # Reload app with clean state
 
             except Exception as e:
                 st.error(f"Error deleting data: {e}")
